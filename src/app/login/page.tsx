@@ -24,12 +24,15 @@ export default function LoginPage() {
     <div className="min-h-screen flex flex-col md:flex-row bg-background">
       {/* Desktop Visual Half */}
       <div className="hidden md:flex flex-1 relative bg-muted overflow-hidden">
-        <Image
-          src={splashBg?.imageUrl || ""}
-          alt="Brand Visual"
-          fill
-          className="object-cover opacity-40"
-        />
+        {splashBg?.imageUrl && (
+          <Image
+            src={splashBg.imageUrl}
+            alt="Brand Visual"
+            fill
+            className="object-cover opacity-40"
+            data-ai-hint={splashBg.imageHint}
+          />
+        )}
         <div className="absolute inset-0 bg-gradient-to-r from-background to-transparent" />
         <div className="relative z-10 p-12 flex flex-col justify-center">
           <h2 className="text-6xl font-headline font-bold text-foreground mb-4">

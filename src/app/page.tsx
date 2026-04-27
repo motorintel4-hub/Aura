@@ -30,7 +30,7 @@ export default function SplashScreen() {
           alt="AURA AI Background"
           fill
           className="object-cover"
-          data-ai-hint="abstract kinetic speed"
+          data-ai-hint={splashBg?.imageHint || "abstract kinetic speed"}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background" />
       </div>
