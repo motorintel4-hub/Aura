@@ -15,10 +15,12 @@ import {
   BarChart3,
   Sparkles,
   ChevronRight,
-  Zap
+  Zap,
+  BookOpen
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
+import { cn } from "@/lib/utils";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -169,7 +171,7 @@ export default function DashboardPage() {
 
           <Card className="bg-card border-none">
             <CardHeader>
-              <CardTitle className="text-sm">Leaderboard</Title>
+              <CardTitle className="text-sm">Leaderboard</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               {[
@@ -199,6 +201,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-import { BookOpen } from "lucide-react";
-import { cn } from "@/lib/utils";
