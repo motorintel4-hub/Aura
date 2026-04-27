@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 24 9% 11%;
+    --foreground: 0 0% 98%;
+    --card: 27 15% 15%;
+    --card-foreground: 0 0% 98%;
+    --popover: 24 9% 11%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 45 93% 50%;
+    --primary-foreground: 24 9% 11%;
+    --secondary: 180 100% 35%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 27 15% 20%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 180 100% 35%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 70% 47%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 27 15% 25%;
+    --input: 27 15% 25%;
+    --ring: 45 93% 50%;
+    --radius: 0.75rem;
+
+    --sidebar-background: 24 9% 11%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 45 93% 50%;
+    --sidebar-primary-foreground: 24 9% 11%;
+    --sidebar-accent: 27 15% 20%;
+    --sidebar-accent-foreground: 45 93% 50%;
+    --sidebar-border: 27 15% 25%;
+    --sidebar-ring: 45 93% 50%;
+
+    --chart-1: 45 93% 50%;
+    --chart-2: 180 100% 35%;
+    --chart-3: 0 70% 47%;
+    --chart-4: 200 50% 50%;
+    --chart-5: 280 50% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-headline uppercase tracking-wider;
+  }
+}
+
+.cockpit-hud {
+  background: radial-gradient(circle at center, rgba(0, 181, 181, 0.1) 0%, transparent 70%);
+}
+
+.amber-glow {
+  box-shadow: 0 0 15px rgba(242, 184, 15, 0.3);
+}
+
+.teal-glow {
+  box-shadow: 0 0 15px rgba(0, 181, 181, 0.3);
+}

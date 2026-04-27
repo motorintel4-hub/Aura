@@ -1,0 +1,40 @@
+{
+  "placeholderImages": [
+    {
+      "id": "splash-bg",
+      "description": "Abstract kinetic speed lines and cockpit HUD graphic.",
+      "imageUrl": "https://picsum.photos/seed/aura-splash/1200/800",
+      "imageHint": "abstract kinetic speed"
+    },
+    {
+      "id": "advisor-avatar",
+      "description": "Professional avatar for sales advisor.",
+      "imageUrl": "https://picsum.photos/seed/advisor/200/200",
+      "imageHint": "professional avatar"
+    },
+    {
+      "id": "grand-touring",
+      "description": "MotorIntel Grand Touring luxury sedan.",
+      "imageUrl": "https://picsum.photos/seed/grandtouring/800/600",
+      "imageHint": "luxury car"
+    },
+    {
+      "id": "urban-commuter",
+      "description": "MotorIntel Urban Commuter compact electric car.",
+      "imageUrl": "https://picsum.photos/seed/urbancommuter/800/600",
+      "imageHint": "compact electric car"
+    },
+    {
+      "id": "adventure-suv",
+      "description": "MotorIntel Adventure SUV rugged off-road vehicle.",
+      "imageUrl": "https://picsum.photos/seed/adventuresuv/800/600",
+      "imageHint": "offroad suv"
+    },
+    {
+      "id": "electric-drive",
+      "description": "MotorIntel Electric Drive futuristic EV.",
+      "imageUrl": "https://picsum.photos/seed/electricdrive/800/600",
+      "imageHint": "futuristic car"
+    }
+  ]
+}
