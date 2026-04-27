@@ -1,0 +1,211 @@
+/**
+ * Aura: Automotive Dealership Advisor Co-pilot - Security Rules
+ * 
+ * Core Philosophy:
+ * This ruleset enforces a strict user-ownership model. Every piece of operational data (Customers,
+ * Sessions, Notes, etc.) is strictly siloed under a specific Advisor's identity. Authorization
+ * is derived primarily from the Firestore path hierarchy, which mirrors the application's
+ * logical structure.
+ * 
+ * Data Structure:
+ * - All advisor-specific data is nested under `/advisors/{advisorId}`.
+ * - Public/System data (Vehicles, Accessories, Training Modules) is stored in root-level 
+ *   collections and is read-only for authenticated advisors.
+ * 
+ * Key Security Decisions:
+ * - Denormalization for Authorization: Critical relational fields like `advisorId` or `authorId`
+ *   are required on creation and enforced as immutable to ensure that queries remain 
+ *   secure and performant without expensive lookups.
+ * - Path-to-Field Consistency: On document creation within the advisor tree, the rules 
+ *   mandate that internal IDs (like `advisorId`) match the path wildcards and the 
+ *   authenticated user's UID.
+ * - Defensive Defaults: All root-level collections default to private unless explicitly 
+ *   defined as read-only system data. Destructive operations (update/delete) require 
+ *   explicit existence checks.
+ */
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // --- Helper Functions ---
+
+    /** @description Checks if the user is authenticated. */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /** @description Checks if the user's UID matches the provided userId. */
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    /** @description Checks if the user is the owner and the document exists. */
+    function isExistingOwner(userId) {
+      return resource != null && isOwner(userId);
+    }
+
+    /** @description Enforces that a field cannot be changed during an update. */
+    function isImmutable(fieldName) {
+      return request.resource.data[fieldName] == resource.data[fieldName];
+    }
+
+    // --- Advisor Profile ---
+
+    /**
+     * @description Rules for the Advisor's own profile document.
+     * @path /advisors/{advisorId}
+     * @allow (create) if advisorId matches auth.uid and ID field matches.
+     * @deny (read) if user is not the advisor themselves.
+     * @principle Ownership: Silos profile data to the specific authenticated advisor.
+     */
+    match /advisors/{advisorId} {
+      allow get, list: if isOwner(advisorId);
+      allow create: if isOwner(advisorId) && request.resource.data.id == advisorId;
+      allow update: if isExistingOwner(advisorId) && isImmutable('id');
+      allow delete: if isExistingOwner(advisorId);
+
+      // --- Advisor Subcollections ---
+
+      /**
+       * @description Rules for performance, training, and simulation data.
+       * @path /advisors/{advisorId}/[subcollection]/{id}
+       * @allow (read/write) if the parent advisorId matches auth.uid.
+       * @principle Hierarchical Authorization: Inherits access from the advisor path.
+       */
+      match /performance/{performanceId} {
+        allow get, list: if isOwner(advisorId);
+        allow create: if isOwner(advisorId) && request.resource.data.advisorId == advisorId;
+        allow update: if isExistingOwner(advisorId) && isImmutable('advisorId');
+        allow delete: if isExistingOwner(advisorId);
+      }
+
+      match /notifications/{notificationId} {
+        allow get, list: if isOwner(advisorId);
+        allow create: if isOwner(advisorId) && request.resource.data.advisorId == advisorId;
+        allow update: if isExistingOwner(advisorId) && isImmutable('advisorId');
+        allow delete: if isExistingOwner(advisorId);
+      }
+
+      match /trainingProgress/{progressId} {
+        allow get, list: if isOwner(advisorId);
+        allow create: if isOwner(advisorId) && request.resource.data.advisorId == advisorId;
+        allow update: if isExistingOwner(advisorId) && isImmutable('advisorId');
+        allow delete: if isExistingOwner(advisorId);
+      }
+
+      match /simulationAttempts/{attemptId} {
+        allow get, list: if isOwner(advisorId);
+        allow create: if isOwner(advisorId) && request.resource.data.advisorId == advisorId;
+        allow update: if isExistingOwner(advisorId) && isImmutable('advisorId');
+        allow delete: if isExistingOwner(advisorId);
+      }
+
+      // --- Customer Records ---
+
+      /**
+       * @description Rules for Customer records managed by the Advisor.
+       * @path /advisors/{advisorId}/customers/{customerId}
+       * @allow (create) if advisorId field matches path and auth.uid.
+       * @principle Relational Integrity: Ensures customers are linked to the correct advisor.
+       */
+      match /customers/{customerId} {
+        allow get, list: if isOwner(advisorId);
+        allow create: if isOwner(advisorId) && request.resource.data.advisorId == advisorId;
+        allow update: if isExistingOwner(advisorId) && isImmutable('advisorId');
+        allow delete: if isExistingOwner(advisorId);
+
+        // --- Customer Subcollections ---
+
+        match /sessions/{sessionId} {
+          allow get, list: if isOwner(advisorId);
+          allow create: if isOwner(advisorId) && request.resource.data.advisorId == advisorId && request.resource.data.customerId == customerId;
+          allow update: if isExistingOwner(advisorId) && isImmutable('advisorId') && isImmutable('customerId');
+          allow delete: if isExistingOwner(advisorId);
+
+          match /discovery/{discoveryId} {
+            allow get, list: if isOwner(advisorId);
+            allow create: if isOwner(advisorId) && request.resource.data.sessionId == sessionId;
+            allow update: if isExistingOwner(advisorId) && isImmutable('sessionId');
+            allow delete: if isExistingOwner(advisorId);
+          }
+        }
+
+        match /journeyEvents/{eventId} {
+          allow get, list: if isOwner(advisorId);
+          allow create: if isOwner(advisorId) && request.resource.data.customerId == customerId;
+          allow update: if isExistingOwner(advisorId) && isImmutable('customerId');
+          allow delete: if isExistingOwner(advisorId);
+        }
+
+        match /documents/{documentId} {
+          allow get, list: if isOwner(advisorId);
+          allow create: if isOwner(advisorId) && request.resource.data.customerId == customerId;
+          allow update: if isExistingOwner(advisorId) && isImmutable('customerId');
+          allow delete: if isExistingOwner(advisorId);
+        }
+
+        match /notes/{noteId} {
+          allow get, list: if isOwner(advisorId);
+          allow create: if isOwner(advisorId) && request.resource.data.authorId == advisorId && request.resource.data.customerId == customerId;
+          allow update: if isExistingOwner(advisorId) && isImmutable('authorId') && isImmutable('customerId');
+          allow delete: if isExistingOwner(advisorId);
+        }
+
+        match /dealConfigurations/{dealConfigId} {
+          allow get, list: if isOwner(advisorId);
+          allow create: if isOwner(advisorId) && request.resource.data.advisorId == advisorId && request.resource.data.customerId == customerId;
+          allow update: if isExistingOwner(advisorId) && isImmutable('advisorId') && isImmutable('customerId');
+          allow delete: if isExistingOwner(advisorId);
+        }
+      }
+    }
+
+    // --- Read-Only System Collections ---
+
+    /**
+     * @description Static vehicle data used for advisor briefing and customer pitches.
+     * @path /vehicles/{vehicleId}
+     * @allow (read) if signed in.
+     * @deny (write) always.
+     * @principle Read-Only Auth: Protects master data from unauthorized modifications.
+     */
+    match /vehicles/{vehicleId} {
+      allow get, list: if isSignedIn();
+      allow create, update, delete: if false;
+    }
+
+    /**
+     * @description Static accessory catalog for deal configurations.
+     * @path /accessories/{accessoryId}
+     * @allow (read) if signed in.
+     * @principle Read-Only Auth: Shared assets are immutable for advisors.
+     */
+    match /accessories/{accessoryId} {
+      allow get, list: if isSignedIn();
+      allow create, update, delete: if false;
+    }
+
+    /**
+     * @description Training curriculum content for the Kinetic Training Hub.
+     * @path /trainingModules/{moduleId}
+     * @allow (read) if signed in.
+     * @principle Read-Only Auth: Prevents manipulation of training definitions.
+     */
+    match /trainingModules/{moduleId} {
+      allow get, list: if isSignedIn();
+      allow create, update, delete: if false;
+    }
+
+    /**
+     * @description Pre-defined simulation scenarios for advisor practice.
+     * @path /simulatorScenarios/{scenarioId}
+     * @allow (read) if signed in.
+     * @principle Read-Only Auth: Scenarios are system-provided.
+     */
+    match /simulatorScenarios/{scenarioId} {
+      allow get, list: if isSignedIn();
+      allow create, update, delete: if false;
+    }
+  }
+}

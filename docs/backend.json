@@ -1,0 +1,1302 @@
+{
+  "entities": {
+    "Advisor": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Advisor",
+      "type": "object",
+      "description": "Represents a frontline sales advisor within the automotive dealership.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Advisor entity."
+        },
+        "fullName": {
+          "type": "string",
+          "description": "The full name of the sales advisor."
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The mobile phone number of the advisor, used for OTP login."
+        },
+        "employeeId": {
+          "type": "string",
+          "description": "The unique employee ID for the advisor, an alternative login method."
+        },
+        "dealershipName": {
+          "type": "string",
+          "description": "The name of the dealership the advisor is associated with."
+        },
+        "city": {
+          "type": "string",
+          "description": "The city where the dealership is located."
+        },
+        "professionalRole": {
+          "type": "string",
+          "description": "The professional role of the advisor, e.g., 'Sales Manager', 'Sales Consultant'."
+        },
+        "profilePhotoUrl": {
+          "type": "string",
+          "description": "URL to the advisor's profile photo.",
+          "format": "uri"
+        },
+        "languagePreference": {
+          "type": "string",
+          "description": "The preferred language for the advisor's app interface.",
+          "format": "string",
+          "items": {
+            "type": "string"
+          }
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the advisor's profile was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp when the advisor's profile was last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "fullName",
+        "phoneNumber",
+        "employeeId",
+        "dealershipName",
+        "city",
+        "professionalRole",
+        "languagePreference",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Customer": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Customer",
+      "type": "object",
+      "description": "Represents a potential or existing customer interacting with a sales advisor.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Customer entity."
+        },
+        "advisorId": {
+          "type": "string",
+          "description": "Reference to the Advisor who is managing this customer. (Relationship: Advisor 1:N Customer)"
+        },
+        "fullName": {
+          "type": "string",
+          "description": "The full name of the customer."
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The contact phone number of the customer."
+        },
+        "email": {
+          "type": "string",
+          "description": "The email address of the customer.",
+          "format": "email"
+        },
+        "heatStatus": {
+          "type": "string",
+          "description": "The lead's heat status indicating their level of interest.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "buyerType": {
+          "type": "string",
+          "description": "Automatically detected buyer persona based on discovery data, e.g., 'Urban Family Buyer', 'First-Time Buyer', 'Safety-Conscious Buyer'."
+        },
+        "leadStage": {
+          "type": "string",
+          "description": "The current stage of the customer in the sales funnel, e.g., 'Discovery', 'Test Drive', 'Negotiation'."
+        },
+        "vehicleInterestModel": {
+          "type": "string",
+          "description": "The specific vehicle model the customer is interested in. (References Vehicle.modelName)"
+        },
+        "vehicleInterestTrim": {
+          "type": "string",
+          "description": "The preferred trim level for the interested vehicle."
+        },
+        "vehicleInterestColor": {
+          "type": "string",
+          "description": "The preferred color for the interested vehicle."
+        },
+        "preferredDeliveryPoint": {
+          "type": "string",
+          "description": "The customer's preferred location for vehicle handover."
+        },
+        "decisionMatrix": {
+          "type": "array",
+          "description": "A list of customer priorities and their scores out of ten, influencing their decision.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the customer record was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp when the customer record was last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "advisorId",
+        "fullName",
+        "phoneNumber",
+        "heatStatus",
+        "buyerType",
+        "leadStage",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Session": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Session",
+      "type": "object",
+      "description": "Represents an individual interaction session between an advisor and a customer.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Session entity."
+        },
+        "customerId": {
+          "type": "string",
+          "description": "Reference to the Customer involved in this session. (Relationship: Customer 1:N Session)"
+        },
+        "advisorId": {
+          "type": "string",
+          "description": "Reference to the Advisor conducting this session. (Relationship: Advisor 1:N Session)"
+        },
+        "interactionType": {
+          "type": "string",
+          "description": "The type of interaction, e.g., walk-in, phone call, video call, revisit."
+        },
+        "status": {
+          "type": "string",
+          "description": "The current status of the session, e.g., 'active', 'completed'."
+        },
+        "startedAt": {
+          "type": "string",
+          "description": "Timestamp when the session officially started.",
+          "format": "date-time"
+        },
+        "completedAt": {
+          "type": "string",
+          "description": "Timestamp when the session was marked as completed.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "customerId",
+        "advisorId",
+        "interactionType",
+        "status",
+        "startedAt"
+      ]
+    },
+    "Discovery": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Discovery",
+      "type": "object",
+      "description": "Stores the results of the 6P customer discovery flow for a specific session.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Discovery entity."
+        },
+        "sessionId": {
+          "type": "string",
+          "description": "Reference to the Session during which this discovery was conducted. (Relationship: Session 1:1 Discovery)"
+        },
+        "p1Purpose": {
+          "type": "string",
+          "description": "JSON object storing the advisor's input for the 'Purpose' (P1) step of the 6P discovery."
+        },
+        "p2People": {
+          "type": "string",
+          "description": "JSON object storing the advisor's input for the 'People' (P2) step of the 6P discovery."
+        },
+        "p3Pattern": {
+          "type": "string",
+          "description": "JSON object storing the advisor's input for the 'Pattern' (P3) step of the 6P discovery."
+        },
+        "p4Preferences": {
+          "type": "string",
+          "description": "JSON object storing the advisor's input for the 'Preferences' (P4) step of the 6P discovery."
+        },
+        "p5Price": {
+          "type": "string",
+          "description": "JSON object storing the advisor's input for the 'Price' (P5) step of the 6P discovery."
+        },
+        "p6PurchaseContext": {
+          "type": "string",
+          "description": "JSON object storing the advisor's input for the 'Purchase Context' (P6) step of the 6P discovery."
+        },
+        "generatedPersona": {
+          "type": "string",
+          "description": "The AI-generated buyer persona label based on the 6P data."
+        },
+        "advisorBriefing": {
+          "type": "string",
+          "description": "The AI-generated two-line advisor briefing (lead with, highlight, mention, avoid)."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the discovery record was created.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "sessionId",
+        "p1Purpose",
+        "p2People",
+        "p3Pattern",
+        "p4Preferences",
+        "p5Price",
+        "p6PurchaseContext",
+        "createdAt"
+      ]
+    },
+    "CustomerJourneyEvent": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "CustomerJourneyEvent",
+      "type": "object",
+      "description": "Records individual events and interactions in a customer's journey.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the CustomerJourneyEvent entity."
+        },
+        "customerId": {
+          "type": "string",
+          "description": "Reference to the Customer associated with this journey event. (Relationship: Customer 1:N CustomerJourneyEvent)"
+        },
+        "sessionId": {
+          "type": "string",
+          "description": "Reference to the Session in which this event occurred. (Relationship: Session 1:N CustomerJourneyEvent)"
+        },
+        "eventType": {
+          "type": "string",
+          "description": "The type of event in the customer's journey, e.g., 'walk-in', 'needs-assessment', 'test-drive', 'negotiation', 'follow-up'."
+        },
+        "eventDescription": {
+          "type": "string",
+          "description": "A detailed description of the journey event."
+        },
+        "aiInsight": {
+          "type": "string",
+          "description": "An AI-generated insight or observation related to this journey event."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the journey event was recorded.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "customerId",
+        "eventType",
+        "eventDescription",
+        "createdAt"
+      ]
+    },
+    "Document": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Document",
+      "type": "object",
+      "description": "Stores details and metadata for documents uploaded for a customer.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Document entity."
+        },
+        "customerId": {
+          "type": "string",
+          "description": "Reference to the Customer this document belongs to. (Relationship: Customer 1:N Document)"
+        },
+        "fileName": {
+          "type": "string",
+          "description": "The name of the uploaded file."
+        },
+        "fileUrl": {
+          "type": "string",
+          "description": "URL where the document is stored.",
+          "format": "uri"
+        },
+        "fileSize": {
+          "type": "number",
+          "description": "The size of the file in bytes."
+        },
+        "status": {
+          "type": "string",
+          "description": "The verification status of the document, e.g., 'verified', 'review-in-progress'."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the document was uploaded.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "customerId",
+        "fileName",
+        "fileUrl",
+        "fileSize",
+        "status",
+        "createdAt"
+      ]
+    },
+    "Note": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Note",
+      "type": "object",
+      "description": "Stores textual or voice notes related to a customer interaction.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Note entity."
+        },
+        "customerId": {
+          "type": "string",
+          "description": "Reference to the Customer this note is about. (Relationship: Customer 1:N Note)"
+        },
+        "authorId": {
+          "type": "string",
+          "description": "Reference to the Advisor who created this note. (Relationship: Advisor 1:N Note)"
+        },
+        "noteType": {
+          "type": "string",
+          "description": "The type of note, e.g., 'general', 'follow-up', 'voice-note'."
+        },
+        "bodyText": {
+          "type": "string",
+          "description": "The textual content of the note, or a transcript if it was a voice note."
+        },
+        "voiceNoteUrl": {
+          "type": "string",
+          "description": "URL to the audio file if the note is a voice note.",
+          "format": "uri"
+        },
+        "voiceNoteDuration": {
+          "type": "number",
+          "description": "The duration of the voice note in seconds."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the note was created.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "customerId",
+        "authorId",
+        "noteType",
+        "bodyText",
+        "createdAt"
+      ]
+    },
+    "Vehicle": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Vehicle",
+      "type": "object",
+      "description": "Stores comprehensive data for each of the four specific vehicle models.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Vehicle entity."
+        },
+        "modelName": {
+          "type": "string",
+          "description": "The unique model name of the vehicle."
+        },
+        "tagline": {
+          "type": "string",
+          "description": "A short, catchy phrase summarizing the vehicle's appeal."
+        },
+        "startingPrice": {
+          "type": "number",
+          "description": "The starting price of the vehicle model."
+        },
+        "variants": {
+          "type": "array",
+          "description": "A JSON array describing different variants (trims) of the vehicle, including names, positioning, prices, and price deltas.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "specs": {
+          "type": "array",
+          "description": "A JSON object storing key specifications and features of the vehicle, e.g., mileage, boot space, airbags.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "pitchLevel1": {
+          "type": "string",
+          "description": "The AI-generated script for the Functional Pitch level."
+        },
+        "pitchLevel2": {
+          "type": "string",
+          "description": "The AI-generated script for the Emotional Pitch level."
+        },
+        "pitchLevel3": {
+          "type": "string",
+          "description": "The AI-generated script for the Aspirational Pitch level."
+        },
+        "objections": {
+          "type": "array",
+          "description": "A JSON array of common objections for this vehicle with recommended responses.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "competitorComparisons": {
+          "type": "array",
+          "description": "A JSON array detailing comparisons against key competitor vehicles.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "targetPersona": {
+          "type": "array",
+          "description": "A JSON object describing the ideal target persona for this vehicle, including segment, age range, lifestyle tags, and a descriptor quote.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the vehicle data was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp when the vehicle data was last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "modelName",
+        "startingPrice",
+        "pitchLevel1",
+        "pitchLevel2",
+        "pitchLevel3",
+        "variants",
+        "specs",
+        "objections",
+        "competitorComparisons",
+        "targetPersona",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "TrainingModule": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "TrainingModule",
+      "type": "object",
+      "description": "Defines a single training course, live session, or simulation available in the Kinetic Training Hub.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the TrainingModule entity."
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the training module."
+        },
+        "category": {
+          "type": "string",
+          "description": "The category of the training module, e.g., 'Product Knowledge', 'Soft Skills'."
+        },
+        "durationMinutes": {
+          "type": "number",
+          "description": "The estimated duration of the training module in minutes."
+        },
+        "type": {
+          "type": "string",
+          "description": "The type of training module, e.g., 'course', 'live', 'simulation'."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the training module was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp when the training module was last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "type",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "AdvisorPerformance": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "AdvisorPerformance",
+      "type": "object",
+      "description": "Records an advisor's aggregated performance metrics for a specific month.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the AdvisorPerformance entity."
+        },
+        "advisorId": {
+          "type": "string",
+          "description": "Reference to the Advisor whose performance is being tracked. (Relationship: Advisor 1:N AdvisorPerformance)"
+        },
+        "month": {
+          "type": "string",
+          "description": "The month for which the performance data is recorded (e.g., 'YYYY-MM')."
+        },
+        "walkInsCount": {
+          "type": "number",
+          "description": "The total count of customer walk-ins handled by the advisor in the month."
+        },
+        "conversionsCount": {
+          "type": "number",
+          "description": "The total count of successful conversions (deals closed) by the advisor in the month."
+        },
+        "avgDealValue": {
+          "type": "number",
+          "description": "The average value of deals closed by the advisor in the month."
+        },
+        "rank": {
+          "type": "number",
+          "description": "The advisor's ranking among peers for the month."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when this performance record was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp when this performance record was last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "advisorId",
+        "month",
+        "walkInsCount",
+        "conversionsCount",
+        "avgDealValue",
+        "rank",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Accessory": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Accessory",
+      "type": "object",
+      "description": "Represents an individual vehicle accessory available for deal configuration.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Accessory entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the accessory."
+        },
+        "description": {
+          "type": "string",
+          "description": "A brief description of the accessory."
+        },
+        "category": {
+          "type": "string",
+          "description": "The category the accessory belongs to, e.g., 'Essential', 'Protection and Care', 'Tech and Infotainment'."
+        },
+        "price": {
+          "type": "number",
+          "description": "The price of the accessory."
+        },
+        "isRecommended": {
+          "type": "boolean",
+          "description": "Indicates if the accessory is AI-recommended."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the accessory record was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp when the accessory record was last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "category",
+        "price",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "DealConfiguration": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "DealConfiguration",
+      "type": "object",
+      "description": "Represents a specific vehicle deal being configured for a customer, including selected vehicle and accessories.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the DealConfiguration entity."
+        },
+        "customerId": {
+          "type": "string",
+          "description": "Reference to the Customer for whom this deal is configured. (Relationship: Customer 1:N DealConfiguration)"
+        },
+        "advisorId": {
+          "type": "string",
+          "description": "Reference to the Advisor who configured this deal. (Relationship: Advisor 1:N DealConfiguration)"
+        },
+        "vehicleId": {
+          "type": "string",
+          "description": "Reference to the selected Vehicle for this deal. (Relationship: Vehicle 1:N DealConfiguration)"
+        },
+        "selectedTrim": {
+          "type": "string",
+          "description": "The specific trim level chosen for the vehicle."
+        },
+        "selectedColor": {
+          "type": "string",
+          "description": "The chosen color for the vehicle."
+        },
+        "basePrice": {
+          "type": "number",
+          "description": "The base ex-showroom price of the selected vehicle configuration."
+        },
+        "selectedAccessoryIds": {
+          "type": "array",
+          "description": "References to the selected Accessory entities included in this deal. (Relationship: Accessory N:N DealConfiguration)",
+          "items": {
+            "type": "string"
+          }
+        },
+        "accessoriesTotal": {
+          "type": "number",
+          "description": "The total price of all selected accessories."
+        },
+        "finalPrice": {
+          "type": "number",
+          "description": "The final calculated price of the deal, including vehicle and accessories."
+        },
+        "status": {
+          "type": "string",
+          "description": "The status of the deal configuration, e.g., 'draft', 'confirmed', 'converted'."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the deal configuration was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp when the deal configuration was last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "customerId",
+        "advisorId",
+        "vehicleId",
+        "selectedTrim",
+        "selectedColor",
+        "basePrice",
+        "selectedAccessoryIds",
+        "accessoriesTotal",
+        "finalPrice",
+        "status",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Notification": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Notification",
+      "type": "object",
+      "description": "Represents an individual notification for an advisor.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Notification entity."
+        },
+        "advisorId": {
+          "type": "string",
+          "description": "Reference to the Advisor to whom this notification is directed. (Relationship: Advisor 1:N Notification)"
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the notification."
+        },
+        "body": {
+          "type": "string",
+          "description": "The main content text of the notification."
+        },
+        "icon": {
+          "type": "string",
+          "description": "An identifier or URL for the icon associated with the notification type."
+        },
+        "actionType": {
+          "type": "string",
+          "description": "The type of action associated with the notification, e.g., 'ViewLead', 'OpenTargets'."
+        },
+        "actionTargetId": {
+          "type": "string",
+          "description": "Optional: ID of the entity that the action should navigate to (e.g., customerId, trainingModuleId)."
+        },
+        "isRead": {
+          "type": "boolean",
+          "description": "Indicates whether the advisor has read the notification."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the notification was generated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "advisorId",
+        "title",
+        "body",
+        "isRead",
+        "createdAt"
+      ]
+    },
+    "AdvisorTrainingProgress": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "AdvisorTrainingProgress",
+      "type": "object",
+      "description": "Tracks an individual advisor's progress on a specific training module.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the AdvisorTrainingProgress entity."
+        },
+        "advisorId": {
+          "type": "string",
+          "description": "Reference to the Advisor whose training progress is being tracked. (Relationship: Advisor 1:N AdvisorTrainingProgress)"
+        },
+        "trainingModuleId": {
+          "type": "string",
+          "description": "Reference to the TrainingModule being undertaken. (Relationship: TrainingModule 1:N AdvisorTrainingProgress)"
+        },
+        "completionPercentage": {
+          "type": "number",
+          "description": "The percentage of the training module completed by the advisor (0-100)."
+        },
+        "status": {
+          "type": "string",
+          "description": "The current status of the advisor's progress, e.g., 'not-started', 'in-progress', 'completed'."
+        },
+        "lastAccessedAt": {
+          "type": "string",
+          "description": "Timestamp when the advisor last accessed this training module.",
+          "format": "date-time"
+        },
+        "completedAt": {
+          "type": "string",
+          "description": "Timestamp when the advisor completed the training module.",
+          "format": "date-time"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when this training progress record was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp when this training progress record was last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "advisorId",
+        "trainingModuleId",
+        "completionPercentage",
+        "status",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "SimulatorScenario": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "SimulatorScenario",
+      "type": "object",
+      "description": "Defines a single co-pilot simulation scenario for advisor training.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the SimulatorScenario entity."
+        },
+        "scenarioDescription": {
+          "type": "string",
+          "description": "A description of the simulation context and objective."
+        },
+        "salesGoal": {
+          "type": "string",
+          "description": "The primary sales goal for this simulation scenario."
+        },
+        "customerStatement": {
+          "type": "string",
+          "description": "The customer's statement or objection presented in the simulation."
+        },
+        "responseOptions": {
+          "type": "array",
+          "description": "A JSON array of possible response options for the advisor to choose from.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "feedback": {
+          "type": "array",
+          "description": "A JSON object containing AI-generated feedback for a chosen response, including coaching message, explanation, and performance metrics.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "audioFeedbackUrl": {
+          "type": "string",
+          "description": "URL to an optional audio feedback recording for the scenario.",
+          "format": "uri"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the simulation scenario was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp when the simulation scenario was last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "scenarioDescription",
+        "salesGoal",
+        "customerStatement",
+        "responseOptions",
+        "feedback",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "AdvisorSimulationAttempt": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "AdvisorSimulationAttempt",
+      "type": "object",
+      "description": "Records an advisor's attempt at completing a simulation scenario and their performance.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the AdvisorSimulationAttempt entity."
+        },
+        "advisorId": {
+          "type": "string",
+          "description": "Reference to the Advisor who attempted the simulation. (Relationship: Advisor 1:N AdvisorSimulationAttempt)"
+        },
+        "simulatorScenarioId": {
+          "type": "string",
+          "description": "Reference to the SimulatorScenario that was attempted. (Relationship: SimulatorScenario 1:N AdvisorSimulationAttempt)"
+        },
+        "chosenResponse": {
+          "type": "string",
+          "description": "The text of the response option chosen by the advisor."
+        },
+        "performanceScores": {
+          "type": "array",
+          "description": "A JSON object containing the advisor's scores for need identification, product mapping, and closing.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "coachingMessage": {
+          "type": "string",
+          "description": "The AI-generated coaching message provided after the attempt."
+        },
+        "auraAiFeedback": {
+          "type": "string",
+          "description": "The general AI feedback provided for the simulation attempt."
+        },
+        "attemptedAt": {
+          "type": "string",
+          "description": "Timestamp when the simulation attempt occurred.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "advisorId",
+        "simulatorScenarioId",
+        "chosenResponse",
+        "performanceScores",
+        "attemptedAt"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/advisors/{advisorId}",
+        "definition": {
+          "entityName": "Advisor",
+          "schema": {
+            "$ref": "#/backend/entities/Advisor"
+          },
+          "description": "Stores individual advisor profiles. Each advisor's data is private to them. The 'advisorId' in the path matches 'request.auth.uid'.",
+          "params": [
+            {
+              "name": "advisorId",
+              "description": "The unique ID of the advisor (matches Firebase Authentication UID)."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/advisors/{advisorId}/performance/{performanceId}",
+        "definition": {
+          "entityName": "AdvisorPerformance",
+          "schema": {
+            "$ref": "#/backend/entities/AdvisorPerformance"
+          },
+          "description": "Stores monthly performance metrics for a specific advisor. Includes denormalized 'advisorId' for authorization independence.",
+          "params": [
+            {
+              "name": "advisorId",
+              "description": "The unique ID of the advisor (matches Firebase Authentication UID)."
+            },
+            {
+              "name": "performanceId",
+              "description": "The unique ID for the performance record (e.g., YYYY-MM)."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/advisors/{advisorId}/notifications/{notificationId}",
+        "definition": {
+          "entityName": "Notification",
+          "schema": {
+            "$ref": "#/backend/entities/Notification"
+          },
+          "description": "Stores notifications directed to a specific advisor. Includes denormalized 'advisorId' for authorization independence.",
+          "params": [
+            {
+              "name": "advisorId",
+              "description": "The unique ID of the advisor (matches Firebase Authentication UID)."
+            },
+            {
+              "name": "notificationId",
+              "description": "The unique ID for the notification."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/advisors/{advisorId}/trainingProgress/{progressId}",
+        "definition": {
+          "entityName": "AdvisorTrainingProgress",
+          "schema": {
+            "$ref": "#/backend/entities/AdvisorTrainingProgress"
+          },
+          "description": "Tracks an advisor's progress on training modules. Includes denormalized 'advisorId' for authorization independence.",
+          "params": [
+            {
+              "name": "advisorId",
+              "description": "The unique ID of the advisor (matches Firebase Authentication UID)."
+            },
+            {
+              "name": "progressId",
+              "description": "The unique ID for the training progress record."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/advisors/{advisorId}/simulationAttempts/{attemptId}",
+        "definition": {
+          "entityName": "AdvisorSimulationAttempt",
+          "schema": {
+            "$ref": "#/backend/entities/AdvisorSimulationAttempt"
+          },
+          "description": "Records an advisor's attempt at a simulation scenario. Includes denormalized 'advisorId' for authorization independence.",
+          "params": [
+            {
+              "name": "advisorId",
+              "description": "The unique ID of the advisor (matches Firebase Authentication UID)."
+            },
+            {
+              "name": "attemptId",
+              "description": "The unique ID for the simulation attempt record."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/advisors/{advisorId}/customers/{customerId}",
+        "definition": {
+          "entityName": "Customer",
+          "schema": {
+            "$ref": "#/backend/entities/Customer"
+          },
+          "description": "Stores customer records, privately owned and managed by a specific advisor. Includes denormalized 'advisorId' for authorization independence.",
+          "params": [
+            {
+              "name": "advisorId",
+              "description": "The unique ID of the advisor (matches Firebase Authentication UID)."
+            },
+            {
+              "name": "customerId",
+              "description": "The unique ID of the customer."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/advisors/{advisorId}/customers/{customerId}/sessions/{sessionId}",
+        "definition": {
+          "entityName": "Session",
+          "schema": {
+            "$ref": "#/backend/entities/Session"
+          },
+          "description": "Records individual interaction sessions between an advisor and a customer. Includes denormalized 'advisorId' and 'customerId' for authorization independence.",
+          "params": [
+            {
+              "name": "advisorId",
+              "description": "The unique ID of the advisor (matches Firebase Authentication UID)."
+            },
+            {
+              "name": "customerId",
+              "description": "The unique ID of the customer."
+            },
+            {
+              "name": "sessionId",
+              "description": "The unique ID of the interaction session."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/advisors/{advisorId}/customers/{customerId}/sessions/{sessionId}/discovery",
+        "definition": {
+          "entityName": "Discovery",
+          "schema": {
+            "$ref": "#/backend/entities/Discovery"
+          },
+          "description": "Stores the 6P customer discovery flow results for a specific session. Includes denormalized 'advisorId' and 'customerId' (implicitly via path, explicitly in document for rule efficiency) for authorization independence.",
+          "params": [
+            {
+              "name": "advisorId",
+              "description": "The unique ID of the advisor (matches Firebase Authentication UID)."
+            },
+            {
+              "name": "customerId",
+              "description": "The unique ID of the customer."
+            },
+            {
+              "name": "sessionId",
+              "description": "The unique ID of the interaction session."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/advisors/{advisorId}/customers/{customerId}/journeyEvents/{eventId}",
+        "definition": {
+          "entityName": "CustomerJourneyEvent",
+          "schema": {
+            "$ref": "#/backend/entities/CustomerJourneyEvent"
+          },
+          "description": "Records individual events in a customer's journey. Includes denormalized 'advisorId' and 'customerId' for authorization independence.",
+          "params": [
+            {
+              "name": "advisorId",
+              "description": "The unique ID of the advisor (matches Firebase Authentication UID)."
+            },
+            {
+              "name": "customerId",
+              "description": "The unique ID of the customer."
+            },
+            {
+              "name": "eventId",
+              "description": "The unique ID for the customer journey event."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/advisors/{advisorId}/customers/{customerId}/documents/{documentId}",
+        "definition": {
+          "entityName": "Document",
+          "schema": {
+            "$ref": "#/backend/entities/Document"
+          },
+          "description": "Stores details and metadata for documents uploaded for a customer. Includes denormalized 'advisorId' and 'customerId' for authorization independence.",
+          "params": [
+            {
+              "name": "advisorId",
+              "description": "The unique ID of the advisor (matches Firebase Authentication UID)."
+            },
+            {
+              "name": "customerId",
+              "description": "The unique ID of the customer."
+            },
+            {
+              "name": "documentId",
+              "description": "The unique ID for the document."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/advisors/{advisorId}/customers/{customerId}/notes/{noteId}",
+        "definition": {
+          "entityName": "Note",
+          "schema": {
+            "$ref": "#/backend/entities/Note"
+          },
+          "description": "Stores notes related to a customer interaction. Includes denormalized 'authorId' (advisorId) and 'customerId' for authorization independence.",
+          "params": [
+            {
+              "name": "advisorId",
+              "description": "The unique ID of the advisor (matches Firebase Authentication UID)."
+            },
+            {
+              "name": "customerId",
+              "description": "The unique ID of the customer."
+            },
+            {
+              "name": "noteId",
+              "description": "The unique ID for the note."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/advisors/{advisorId}/customers/{customerId}/dealConfigurations/{dealConfigId}",
+        "definition": {
+          "entityName": "DealConfiguration",
+          "schema": {
+            "$ref": "#/backend/entities/DealConfiguration"
+          },
+          "description": "Represents a vehicle deal configured for a customer. Includes denormalized 'advisorId' and 'customerId' for authorization independence.",
+          "params": [
+            {
+              "name": "advisorId",
+              "description": "The unique ID of the advisor (matches Firebase Authentication UID)."
+            },
+            {
+              "name": "customerId",
+              "description": "The unique ID of the customer."
+            },
+            {
+              "name": "dealConfigId",
+              "description": "The unique ID for the deal configuration."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/vehicles/{vehicleId}",
+        "definition": {
+          "entityName": "Vehicle",
+          "schema": {
+            "$ref": "#/backend/entities/Vehicle"
+          },
+          "description": "Stores static, read-only data for each of the four specific vehicle models, accessible to all authenticated advisors. No denormalized 'advisorId' required as this is shared data.",
+          "params": [
+            {
+              "name": "vehicleId",
+              "description": "The unique ID for the vehicle model."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/accessories/{accessoryId}",
+        "definition": {
+          "entityName": "Accessory",
+          "schema": {
+            "$ref": "#/backend/entities/Accessory"
+          },
+          "description": "Stores static, read-only data for vehicle accessories, accessible to all authenticated advisors. No denormalized 'advisorId' required as this is shared data.",
+          "params": [
+            {
+              "name": "accessoryId",
+              "description": "The unique ID for the accessory."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/trainingModules/{moduleId}",
+        "definition": {
+          "entityName": "TrainingModule",
+          "schema": {
+            "$ref": "#/backend/entities/TrainingModule"
+          },
+          "description": "Defines static, read-only training courses and simulations, accessible to all authenticated advisors. No denormalized 'advisorId' required as this is shared data.",
+          "params": [
+            {
+              "name": "moduleId",
+              "description": "The unique ID for the training module."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/simulatorScenarios/{scenarioId}",
+        "definition": {
+          "entityName": "SimulatorScenario",
+          "schema": {
+            "$ref": "#/backend/entities/SimulatorScenario"
+          },
+          "description": "Defines static, read-only co-pilot simulation scenarios, accessible to all authenticated advisors. No denormalized 'advisorId' required as this is shared data.",
+          "params": [
+            {
+              "name": "scenarioId",
+              "description": "The unique ID for the simulator scenario."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to rigorously adhere to the core design principles, especially Authorization Independence, Structural Segregation, and the use of Hierarchical Paths for user-owned data. The primary goal is to facilitate simple, robust, and easily debuggable security rules while ensuring data integrity and query efficiency.\n\n**Authorization Independence (Denormalization Strategy):**\nThis is achieved by denormalizing critical authorization fields into every document where access might otherwise depend on a parent document. For instance, `advisorId` is embedded not just in the top-level `Advisor` document, but also in `Customer`, `Session`, `Discovery`, `CustomerJourneyEvent`, `Document`, `Note`, `DealConfiguration`, `AdvisorPerformance`, `Notification`, `AdvisorTrainingProgress`, and `AdvisorSimulationAttempt` documents. This allows security rules to evaluate access permissions solely based on the `request.auth.uid` matching the `advisorId` within the document being accessed, or the `advisorId` wildcard in the path, without needing expensive and complex `get()` calls to parent documents. For example, a rule for a customer's note can directly check `request.auth.uid == /advisors/{advisorId}/customers/{customerId}/notes/{noteId}.data.advisorId` or `request.auth.uid == advisorId` from the path wildcard, eliminating external lookups.\n\nTo perfectly align with this, the `Discovery`, `CustomerJourneyEvent`, and `Document` entities will need an explicit `advisorId` field added to their schema, as it's not explicitly listed in the provided schema for these three entities but is crucial for Authorization Independence within their nested paths.\n\n**Structural Segregation & QAPs (Queries as Authorization Primitives):**\nAll data related to an individual advisor, and the customers they manage, is organized under a top-level `/advisors/{advisorId}/` collection. This creates a secure data silo for each advisor. For example:\n*   `/advisors/{advisorId}/customers/{customerId}`\n*   `/advisors/{advisorId}/customers/{customerId}/sessions/{sessionId}`\n*   `/advisors/{advisorId}/notifications/{notificationId}`\n\nThis hierarchical structure ensures that `list` queries (QAPs) are inherently secure. An advisor querying `firestore.collection('advisors').doc(request.auth.uid).collection('customers')` will only retrieve *their* customers. The security rules can simply state `allow list: if request.auth.uid == advisorId;`, which is highly efficient and secure as Firestore filters data based on the path. Mixing data with different security postures is avoided; private advisor/customer data is segregated from public, read-only application data.\n\nPublic, static application data like `Vehicles`, `Accessories`, `TrainingModules`, and `SimulatorScenarios` are stored in root-level collections (e.g., `/vehicles/{vehicleId}`). These collections will have security rules allowing `read` access to all authenticated users (`if request.auth != null`), but no write access for advisors, ensuring data integrity for these static assets. This segregation simplifies rules, making them easier to audit and maintain.\n\n**Consistency and Debuggability:**\nWildcards are consistently descriptive (e.g., `{advisorId}`, `{customerId}`). Fields like `status` are used for explicit state modeling. The consistent use of `advisorId` throughout ensures clear intent for ownership and access. This approach minimizes complexity in security rules, making them easier to write, understand, and debug."
+  }
+}
