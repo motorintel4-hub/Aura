@@ -1,65 +1,60 @@
 'use server';
+
+import { summarizeCustomerNotesAction } from '@/actions/ai-flows';
+import { z } from 'zod';
+
 /**
- * @fileOverview An AI agent that summarizes customer notes.
- *
- * - summarizeCustomerNotes - A function that handles the customer notes summarization process.
- * - SummarizeCustomerNotesInput - The input type for the summarizeCustomerNotes function.
- * - SummarizeCustomerNotesOutput - The return type for the summarizeCustomerNotes function.
+ * Input schema for customer notes summarization
  */
-
-import { ai } from '@/ai/genkit';
-import { z } from 'genkit';
-
-const SummarizeCustomerNotesInputSchema = z.object({
-  notes: z.array(
-    z.object({
-      bodyText: z.string().describe('The main content of the customer note.'),
-      author: z.string().optional().describe('The author of the note.'),
-      date: z.string().optional().describe('The date the note was created (e.g., "YYYY-MM-DD HH:MM:SS").'),
-      noteType: z.string().optional().describe('The type of note (e.g., "Meeting", "Phone Call", "Email").'),
-    })
-  ).describe('A list of customer interaction notes to be summarized.'),
+export const SummarizeCustomerNotesInputSchema = z.object({
+  notes: z
+    .string()
+    .min(1)
+    .describe('The customer notes and interaction history to summarize.'),
+  customerName: z
+    .string()
+    .min(1)
+    .describe('The name of the customer.'),
+  visitDate: z
+    .string()
+    .min(1)
+    .describe('The date of the customer visit or interaction.'),
 });
+
 export type SummarizeCustomerNotesInput = z.infer<typeof SummarizeCustomerNotesInputSchema>;
 
-const SummarizeCustomerNotesOutputSchema = z.object({
-  summary: z.string().describe('A concise summary of the customer notes, highlighting important themes and key takeaways.'),
+/**
+ * Output schema for customer notes summarization
+ */
+export const SummarizeCustomerNotesOutputSchema = z.object({
+  summary: z.string(),
+  keyNeeds: z.array(z.string()),
+  objections: z.array(z.string()),
+  nextSteps: z.array(z.string()),
+  followUpDeadline: z.string(),
 });
+
 export type SummarizeCustomerNotesOutput = z.infer<typeof SummarizeCustomerNotesOutputSchema>;
 
-export async function summarizeCustomerNotes(input: SummarizeCustomerNotesInput): Promise<SummarizeCustomerNotesOutput> {
-  return summarizeCustomerNotesFlow(input);
-}
+/**
+ * Summarizes customer notes and interaction history into structured insights
+ * including key needs, objections, and recommended next steps.
+ *
+ * @param input - Customer notes and context
+ * @returns Structured summary with actionable next steps
+ */
+export async function summarizeCustomerNotes(
+  input: SummarizeCustomerNotesInput
+): Promise<SummarizeCustomerNotesOutput> {
+  // Validate input
+  const validatedInput = SummarizeCustomerNotesInputSchema.parse(input);
 
-const summarizeCustomerNotesPrompt = ai.definePrompt({
-  name: 'summarizeCustomerNotesPrompt',
-  input: { schema: SummarizeCustomerNotesInputSchema },
-  output: { schema: SummarizeCustomerNotesOutputSchema },
-  prompt: `You are an AI assistant specializing in summarizing customer interaction notes.
-Your task is to review the provided customer notes and generate a concise summary that highlights the most important themes and key takeaways from recent interactions.
-Focus on extracting critical details, customer history, preferences, and any recurring patterns.
+  // Call the server action
+  const result = await summarizeCustomerNotesAction(validatedInput);
 
-Customer Notes:
-{{#each notes}}
-{{#if date}}Date: {{{date}}}
-{{/if}}{{#if author}}Author: {{{author}}}
-{{/if}}{{#if noteType}}Type: {{{noteType}}}
-{{/if}}Content: {{{bodyText}}}
-
----
-{{/each}}
-
-Please provide a summary that is easy for an advisor to quickly review.`,
-});
-
-const summarizeCustomerNotesFlow = ai.defineFlow(
-  {
-    name: 'summarizeCustomerNotesFlow',
-    inputSchema: SummarizeCustomerNotesInputSchema,
-    outputSchema: SummarizeCustomerNotesOutputSchema,
-  },
-  async (input) => {
-    const { output } = await summarizeCustomerNotesPrompt(input);
-    return output!;
+  if (!result.success || !result.data) {
+    throw new Error(result.error || 'Failed to summarize customer notes');
   }
-);
+
+  return result.data;
+}

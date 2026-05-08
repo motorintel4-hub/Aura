@@ -1,61 +1,67 @@
 'use server';
+
+import { generateSalesPitchLevelsAction } from '@/actions/ai-flows';
+import { z } from 'zod';
+
 /**
- * @fileOverview A Genkit flow for generating sales pitch levels (functional, emotional, aspirational)
- *               tailored to a customer's persona for a specific vehicle model.
- *
- * - generateSalesPitchLevels - A function that generates sales pitch levels.
- * - GenerateSalesPitchLevelsInput - The input type for the generateSalesPitchLevels function.
- * - GenerateSalesPitchLevelsOutput - The return type for the generateSalesPitchLevels function.
+ * Input schema for sales pitch levels generation
  */
-
-import { ai } from '@/ai/genkit';
-import { z } from 'genkit';
-
-const GenerateSalesPitchLevelsInputSchema = z.object({
-  vehicleModel: z.string().describe('The name of the vehicle model (one of the four agreed models).'),
-  customerPersona: z.string().describe('A detailed description of the customer persona, including their needs, priorities, and lifestyle.'),
+export const GenerateSalesPitchLevelsInputSchema = z.object({
+  customerProfile: z
+    .string()
+    .min(1)
+    .describe('A detailed description of the customer persona and profile.'),
+  vehicleModel: z
+    .string()
+    .min(1)
+    .describe('The name of the vehicle model.'),
+  keyFeatures: z
+    .string()
+    .min(1)
+    .describe('Key features of the vehicle to emphasize.'),
+  pricePoint: z
+    .string()
+    .min(1)
+    .describe('The price point and financing information.'),
 });
+
 export type GenerateSalesPitchLevelsInput = z.infer<typeof GenerateSalesPitchLevelsInputSchema>;
 
-const GenerateSalesPitchLevelsOutputSchema = z.object({
-  functionalPitch: z.string().describe('A pitch level focused on the hardware, specifications, and practical features of the vehicle.'),
-  emotionalPitch: z.string().describe('A pitch level focused on emotional benefits like family safety, pride of ownership, and driving experience.'),
-  aspirationalPitch: z.string().describe('A pitch level positioning the vehicle as a lifestyle statement, enhancing social status and personal brand.'),
+/**
+ * Output schema for sales pitch levels generation
+ */
+export const GenerateSalesPitchLevelsOutputSchema = z.object({
+  pitchLevels: z.array(
+    z.object({
+      level: z.enum(['introductory', 'detailed', 'closing']),
+      duration: z.string(),
+      content: z.string(),
+      focusPoints: z.array(z.string()),
+    })
+  ),
 });
+
 export type GenerateSalesPitchLevelsOutput = z.infer<typeof GenerateSalesPitchLevelsOutputSchema>;
 
-const generateSalesPitchLevelsPrompt = ai.definePrompt({
-  name: 'generateSalesPitchLevelsPrompt',
-  input: { schema: GenerateSalesPitchLevelsInputSchema },
-  output: { schema: GenerateSalesPitchLevelsOutputSchema },
-  prompt: `You are an expert automotive sales advisor. Your task is to generate three distinct sales pitch levels for the "{{vehicleModel}}" vehicle model, tailored specifically to the customer persona provided.
+/**
+ * Generates three levels of sales pitches (introductory, detailed, closing)
+ * tailored to the customer profile and vehicle.
+ *
+ * @param input - Customer profile, vehicle details, and pricing information
+ * @returns Three-level pitch progression
+ */
+export async function generateSalesPitchLevels(
+  input: GenerateSalesPitchLevelsInput
+): Promise<GenerateSalesPitchLevelsOutput> {
+  // Validate input
+  const validatedInput = GenerateSalesPitchLevelsInputSchema.parse(input);
 
-The pitch levels should be:
-1.  **Functional Pitch**: Focus on the hardware, specifications, and practical features of the vehicle.
-2.  **Emotional Pitch**: Focus on emotional benefits, such as family safety, pride of ownership, and the overall driving experience.
-3.  **Aspirational Pitch**: Position the vehicle as a lifestyle statement, enhancing social status, personal brand, or achieving life goals.
+  // Call the server action
+  const result = await generateSalesPitchLevelsAction(validatedInput);
 
-Ensure all pitches are persuasive and align with the customer's needs and preferences based on their persona.
-
-Vehicle Model: {{vehicleModel}}
-
-Customer Persona: {{{customerPersona}}}
-
-Generate the three pitch levels in the specified JSON format.`,
-});
-
-const generateSalesPitchLevelsFlow = ai.defineFlow(
-  {
-    name: 'generateSalesPitchLevelsFlow',
-    inputSchema: GenerateSalesPitchLevelsInputSchema,
-    outputSchema: GenerateSalesPitchLevelsOutputSchema,
-  },
-  async (input) => {
-    const { output } = await generateSalesPitchLevelsPrompt(input);
-    return output!;
+  if (!result.success || !result.data) {
+    throw new Error(result.error || 'Failed to generate sales pitch levels');
   }
-);
 
-export async function generateSalesPitchLevels(input: GenerateSalesPitchLevelsInput): Promise<GenerateSalesPitchLevelsOutput> {
-  return generateSalesPitchLevelsFlow(input);
+  return result.data;
 }
