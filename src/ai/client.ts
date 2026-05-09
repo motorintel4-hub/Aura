@@ -3,12 +3,19 @@
 
 import OpenAI from 'openai';
 
+const xaiApiKey = process.env.XAI_API_KEY;
+
+if (!xaiApiKey) {
+  console.warn('⚠️  XAI_API_KEY is not configured. Grok AI features will not work.');
+  console.warn('To fix: Set XAI_API_KEY in your environment variables.');
+}
+
 /**
  * Initialize OpenAI client configured for Grok API (xAI)
  * Grok models are accessed via the OpenAI SDK with a custom base URL
  */
 export const grokClient = new OpenAI({
-  apiKey: process.env.XAI_API_KEY,
+  apiKey: xaiApiKey || 'sk-placeholder',
   baseURL: 'https://api.x.ai/v1',
 });
 
