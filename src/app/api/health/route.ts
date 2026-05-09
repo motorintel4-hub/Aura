@@ -1,0 +1,9 @@
+export const dynamic = 'force-dynamic';
+
+export async function GET() {
+  return Response.json({ 
+    status: 'ok', 
+    message: 'Server is running!',
+    timestamp: new Date().toISOString()
+  });
+}
